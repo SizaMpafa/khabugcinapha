@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>African Indigenous Calendar</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .container {
+            background: rgba(255,255,255,0.95);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 700px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        }
+        h1 {
+            text-align: center;
+            color: #1a1a2e;
+            font-size: 2em;
+            margin-bottom: 5px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 25px;
+        }
+        .calendar-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            border-left: 5px solid #f39c12;
+        }
+        .date-section {
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+        .date-section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        .section-title {
+            font-weight: 700;
+            color: #2c3e50;
+            font-size: 1.1em;
+            margin-bottom: 10px;
+            display: block;
+            padding: 5px 10px;
+            background: #e8f0fe;
+            border-radius: 5px;
+        }
+        .row {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .row:last-child { border-bottom: none; }
+        .label {
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 0.9em;
+        }
+        .value {
+            color: #2c3e50;
+            text-align: right;
+            font-size: 0.9em;
+        }
+        .value strong { font-weight: 700; }
+        .highlight { 
+            background: #f39c12; 
+            color: white; 
+            padding: 2px 10px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .leap { color: #e74c3c; font-weight: bold; }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            color: #888;
+            font-size: 0.8em;
+        }
+        .loading {
+            text-align: center;
+            color: #888;
+            padding: 20px;
+        }
+        .section-divider {
+            border: none;
+            border-top: 2px dashed #ddd;
+            margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌍 African Indigenous Calendar</h1>
+        <p class="subtitle">Aligned with the Cosmos • <span class="highlight">Spirituality Must Lead</span></p>
+        
+        <div id="output" class="loading">Loading calendar...</div>
+        
+        <div class="footer">
+            Built with ❤️ for African Indigenous Spiritual Developers • npm: @siza_m_official/afri-spirit-calendar-js
+        </div>
+    </div>
+
+    <script type="module">
+        import init, { WasmAfricanDate as AfricanDate } from 'https://cdn.jsdelivr.net/npm/@siza_m_official/afri-spirit-calendar-js@0.1.0/afri_calendar.js';
+
+        // Helper function to render a date with full details
+        function renderDate(title, date, emoji = '📅') {
+            return `
+                <div class="date-section">
+                    <span class="section-title">${emoji} ${title}</span>
+                    <div class="row">
+                        <span class="label">📝 Date</span>
+                        <span class="value">${date.format("YYYY-MM-DD")}</span>
+                    </div>
+                    <div class="row">
+                        <span class="label">📆 Month</span>
+                        <span class="value">${date.month_name()} (Month ${date.month})</span>
+                    </div>
+                    <div class="row">
+                        <span class="label">📅 Year</span>
+                        <span class="value">${date.year}</span>
+                    </div>
+                    <div class="row">
+                        <span class="label">🔢 Day</span>
+                        <span class="value">${date.day}</span>
+                    </div>
+                    <div class="row">
+                        <span class="label">📆 Weekday</span>
+                        <span class="value"><strong>${date.weekday()}</strong></span>
+                    </div>
+                </div>
+            `;
+        }
+
+        async function run() {
+            try {
+                await init();
+                const today = AfricanDate.today();
+                const output = document.getElementById('output');
+
+                const leapDay2028 = AfricanDate.leap_day(2028);
+                const thirtyDaysFromNow = today.add_days(BigInt(30));
+                const tenThousandDaysAgo = today.add_days(BigInt(-10000));
+                const tenThousandDaysFromNow = today.add_days(BigInt(10000));
+
+                output.innerHTML = `
+                    <div class="calendar-card">
+                        <!-- TODAY -->
+                        ${renderDate('Today', today, '📅')}
+
+                        <hr class="section-divider">
+
+                        <!-- LEAP DAY 2028 -->
+                        ${leapDay2028 ? renderDate('Leap Day 2028', leapDay2028, '🎯') : '<p>N/A</p>'}
+
+                        <!-- 30 DAYS FROM TODAY -->
+                        ${renderDate('30 Days From Today', thirtyDaysFromNow, '⏳')}
+
+                        <!-- 10000 DAYS AGO -->
+                        ${renderDate('10,000 Days Ago', tenThousandDaysAgo, '🔮')}
+
+                        <!-- 10000 DAYS FROM NOW -->
+                        ${renderDate('10,000 Days From Now', tenThousandDaysFromNow, '🚀')}
+
+                        <!-- EXTRA INFO -->
+                        <hr class="section-divider">
+
+                        <div class="date-section">
+                            <span class="section-title">📊 Summary</span>
+                            <div class="row">
+                                <span class="label">📅 Days in this month</span>
+                                <span class="value">${today.days_in_month()} days</span>
+                            </div>
+                            <div class="row">
+                                <span class="label">⭐ Is 2028 a leap year?</span>
+                                <span class="value">${AfricanDate.is_leap_year(2028) ? '✅ Yes' : '❌ No'}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } catch (error) {
+                document.getElementById('output').innerHTML = `
+                    <div class="calendar-card" style="border-left-color: #e74c3c;">
+                        <p style="color: #e74c3c;"><strong>Error:</strong> ${error.message}</p>
+                        <p style="color: #888; font-size: 0.9em; margin-top: 10px;">Please check your internet connection.</p>
+                    </div>
+                `;
+                console.error(error);
+            }
+        }
+        run();
+    </script>
+</body>
+</html>
