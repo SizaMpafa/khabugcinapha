@@ -19,7 +19,7 @@
             background: rgba(255,255,255,0.95);
             border-radius: 20px;
             padding: 40px;
-            max-width: 700px;
+            max-width: 750px;
             width: 100%;
             box-shadow: 0 20px 60px rgba(0,0,0,0.5);
         }
@@ -87,6 +87,7 @@
             font-weight: bold;
         }
         .leap { color: #e74c3c; font-weight: bold; }
+        .countdown { color: #2980b9; font-weight: bold; }
         .footer {
             text-align: center;
             margin-top: 20px;
@@ -118,7 +119,7 @@
     </div>
 
     <script type="module">
-        import init, { WasmAfricanDate as AfricanDate } from 'https://cdn.jsdelivr.net/npm/@siza_m_official/afri-spirit-calendar-js@0.1.0/afri_calendar.js';
+        import init, { WasmAfricanDate as AfricanDate } from 'https://cdn.jsdelivr.net/npm/@siza_m_official/afri-spirit-calendar-js@0.1.1/afri_calendar.js';
 
         // Helper function to render a date with full details
         function renderDate(title, date, emoji = '📅') {
@@ -155,6 +156,20 @@
                 const today = AfricanDate.today();
                 const output = document.getElementById('output');
 
+                // ---- UPCOMING NEW YEAR ----
+                const gregArray = today.to_gregorian();
+                const gregYear = gregArray[0];
+
+                const newYearThisYear = AfricanDate.from_gregorian(gregYear, 8, 1);
+                const daysToNewYear = newYearThisYear.days_between(today);
+                const upcomingNewYear = daysToNewYear >= 0 ? newYearThisYear : AfricanDate.from_gregorian(gregYear + 1, 8, 1);
+                const daysUntilNewYear = upcomingNewYear.days_between(today);
+
+                const eveThisYear = AfricanDate.from_gregorian(gregYear, 7, 31);
+                const daysToEve = eveThisYear.days_between(today);
+                const upcomingEve = daysToEve >= 0 ? eveThisYear : AfricanDate.from_gregorian(gregYear + 1, 7, 31);
+                const daysUntilEve = upcomingEve.days_between(today);
+
                 const leapDay2028 = AfricanDate.leap_day(2028);
                 const thirtyDaysFromNow = today.add_days(BigInt(30));
                 const tenThousandDaysAgo = today.add_days(BigInt(-10000));
@@ -164,6 +179,66 @@
                     <div class="calendar-card">
                         <!-- TODAY -->
                         ${renderDate('Today', today, '📅')}
+
+                        <hr class="section-divider">
+
+                        <!-- UPCOMING NEW YEAR -->
+                        <div class="date-section">
+                            <span class="section-title">🎉 Upcoming New Year's Day</span>
+                            <div class="row">
+                                <span class="label">📝 Date</span>
+                                <span class="value">${upcomingNewYear.format("YYYY-MM-DD")}</span>
+                            </div>
+                            <div class="row">
+                                <span class="label">📆 Month</span>
+                                <span class="value">${upcomingNewYear.month_name()} (Month ${upcomingNewYear.month})</span>
+                            </div>
+                            <div class="row">
+                                <span class="label">📅 Year</span>
+                                <span class="value">${upcomingNewYear.year}</span>
+                            </div>
+                            <div class="row">
+                                <span class="label">🔢 Day</span>
+                                <span class="value">${upcomingNewYear.day}</span>
+                            </div>
+                            <div class="row">
+                                <span class="label">📆 Weekday</span>
+                                <span class="value"><strong>${upcomingNewYear.weekday()}</strong></span>
+                            </div>
+                            <div class="row" style="border-top: 2px solid #ddd; margin-top: 8px; padding-top: 8px;">
+                                <span class="label">⏳ Days until</span>
+                                <span class="value countdown">${daysUntilNewYear > 0 ? daysUntilNewYear + ' days' : 'Today!'}</span>
+                            </div>
+                        </div>
+
+                        <!-- UPCOMING NEW YEAR'S EVE -->
+                        <div class="date-section">
+                            <span class="section-title">🌙 Upcoming New Year's Eve</span>
+                            <div class="row">
+                                <span class="label">📝 Date</span>
+                                <span class="value">${upcomingEve.format("YYYY-MM-DD")}</span>
+                            </div>
+                            <div class="row">
+                                <span class="label">📆 Month</span>
+                                <span class="value">${upcomingEve.month_name()} (Month ${upcomingEve.month})</span>
+                            </div>
+                            <div class="row">
+                                <span class="label">📅 Year</span>
+                                <span class="value">${upcomingEve.year}</span>
+                            </div>
+                            <div class="row">
+                                <span class="label">🔢 Day</span>
+                                <span class="value">${upcomingEve.day}</span>
+                            </div>
+                            <div class="row">
+                                <span class="label">📆 Weekday</span>
+                                <span class="value"><strong>${upcomingEve.weekday()}</strong></span>
+                            </div>
+                            <div class="row" style="border-top: 2px solid #ddd; margin-top: 8px; padding-top: 8px;">
+                                <span class="label">⏳ Days until</span>
+                                <span class="value countdown">${daysUntilEve > 0 ? daysUntilEve + ' days' : 'Today!'}</span>
+                            </div>
+                        </div>
 
                         <hr class="section-divider">
 
@@ -181,7 +256,6 @@
 
                         <!-- EXTRA INFO -->
                         <hr class="section-divider">
-
                         <div class="date-section">
                             <span class="section-title">📊 Summary</span>
                             <div class="row">
